@@ -98,6 +98,7 @@
     "test:watch": "jest --watch",
     "precommit": "node tools commits && npm run lint && npm test",
     "postmerge": "node tools update && npm update",
+    "postinstall" : "npm run build",
     "prepublishOnly": "npm run build"
   }
 }
