@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import treeChanges from 'tree-changes';
 import is from 'is-lite';
 
 import Store from '../modules/store';
@@ -121,11 +120,10 @@ class Joyride extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (!canUseDOM) return;
     const { action, status } = this.state;
-    const { steps, stepIndex } = this.props;
-    const { debug, run, steps: nextSteps, stepIndex: nextStepIndex } = nextProps;
+    const { steps, stepIndex, run } = this.props;
+    const { debug, run: nextRun, steps: nextSteps, stepIndex: nextStepIndex } = nextProps;
     const { setSteps, start, stop, update } = this.store;
     const diffProps = !isEqual(this.props, nextProps);
-    const { changed } = treeChanges(this.props, nextProps);
 
     if (diffProps) {
       log({
@@ -138,20 +136,14 @@ class Joyride extends React.Component {
       });
 
       const stepsChanged = !isEqual(nextSteps, steps);
-      const stepIndexChanged = is.number(nextStepIndex) && changed('stepIndex');
-      let shouldStart = false;
+      const stepIndexChanged = is.number(nextStepIndex) && stepIndex !== nextStepIndex;
 
       /* istanbul ignore else */
-      if (changed('run')) {
-        if (run) {
-          shouldStart = true;
-        }
-        else {
-          stop();
-        }
-      }
-      if (shouldStart) {
+      if (nextRun && !run) {
         start();
+      }
+      if (!nextRun && run) {
+        stop();
       }
 
       if (stepsChanged) {
@@ -188,7 +180,6 @@ class Joyride extends React.Component {
     const { index, lifecycle, status } = this.state;
     const { steps } = this.props;
     const step = getMergedStep(steps[index], this.props);
-    const { changed, changedFrom, changedTo } = treeChanges(prevState, this.state);
     const diffState = !isEqual(prevState, this.state);
 
     if (diffState) {
@@ -202,13 +193,13 @@ class Joyride extends React.Component {
         debug: this.props.debug,
       });
 
-      if (changed('status')) {
+      if (status !== prevState.status) {
         let type = EVENTS.TOUR_STATUS;
 
-        if (changedTo('status', STATUS.FINISHED) || changedTo('status', STATUS.SKIPPED)) {
+        if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
           type = EVENTS.TOUR_END;
         }
-        else if (changedFrom('status', STATUS.READY, STATUS.RUNNING)) {
+        else if (prevState.status === STATUS.READY && status === STATUS.RUNNING) {
           type = EVENTS.TOUR_START;
         }
 
@@ -227,7 +218,7 @@ class Joyride extends React.Component {
         }
       }
 
-      if (changedTo('lifecycle', LIFECYCLE.INIT)) {
+      if (prevState.lifecycle !== lifecycle && lifecycle === LIFECYCLE.INIT) {
         delete this.beaconPopper;
         delete this.tooltipPopper;
       }

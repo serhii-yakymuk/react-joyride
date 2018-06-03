@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import treeChanges from 'tree-changes';
 
 import {
   getClientRect,
@@ -53,11 +52,10 @@ export default class Overlay extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { disableScrolling, lifecycle, spotlightClicks } = nextProps;
-    const { changed, changedTo } = treeChanges(this.props, nextProps);
+    const { disableScrolling, lifecycle, spotlightClicks, disableOverlay } = nextProps;
 
     if (!disableScrolling) {
-      if (changedTo('lifecycle', LIFECYCLE.TOOLTIP)) {
+      if (this.props.lifecycle !== lifecycle && lifecycle === LIFECYCLE.TOOLTIP) {
         this.scrollParent.addEventListener('scroll', this.handleScroll, { passive: true });
 
         setTimeout(() => {
@@ -69,7 +67,11 @@ export default class Overlay extends React.Component {
       }
     }
 
-    if (changed('spotlightClicks') || changed('disableOverlay') || changed('lifecycle')) {
+    if (
+      this.props.spotlightClicks !== spotlightClicks ||
+      this.props.disableOverlay !== disableOverlay ||
+      this.props.lifecycle !== lifecycle
+    ) {
       if (spotlightClicks && lifecycle === LIFECYCLE.TOOLTIP) {
         document.addEventListener('mousemove', this.handleMouseMove, false);
       }
@@ -157,7 +159,7 @@ export default class Overlay extends React.Component {
       cursor: disableOverlay ? 'default' : 'pointer',
       height: getDocumentHeight(),
       pointerEvents: this.state.mouseOverSpotlight ? 'none' : 'auto',
-      ...(isLegacy() ? styles.overlayLegacy : styles.overlay),
+      ...(isLegacy() && placement !== 'center' ? styles.overlayLegacy : styles.overlay),
     };
 
     return (
