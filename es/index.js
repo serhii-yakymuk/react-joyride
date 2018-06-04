@@ -1333,13 +1333,12 @@ var Overlay = function (_React$Component) {
       var showSpotlight = this.state.showSpotlight;
       var _props2 = this.props,
           disableOverlay = _props2.disableOverlay,
-          lifecycle = _props2.lifecycle,
           onClickOverlay = _props2.onClickOverlay,
           placement = _props2.placement,
           styles = _props2.styles;
 
 
-      if (disableOverlay || lifecycle !== LIFECYCLE.TOOLTIP) {
+      if (disableOverlay) {
         return null;
       }
 

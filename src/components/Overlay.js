@@ -145,13 +145,12 @@ export default class Overlay extends React.Component {
     const { showSpotlight } = this.state;
     const {
       disableOverlay,
-      lifecycle,
       onClickOverlay,
       placement,
       styles,
     } = this.props;
 
-    if (disableOverlay || lifecycle !== LIFECYCLE.TOOLTIP) {
+    if (disableOverlay) {
       return null;
     }
 
