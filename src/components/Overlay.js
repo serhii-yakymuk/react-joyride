@@ -22,8 +22,6 @@ export default class Overlay extends React.Component {
 
     this.state = {
       mouseOverSpotlight: false,
-      isScrolling: false,
-      showSpotlight: props.disableScrolling,
     };
   }
 
@@ -88,7 +86,6 @@ export default class Overlay extends React.Component {
   };
 
   get stylesSpotlight() {
-    const { showSpotlight } = this.state;
     const { spotlightClicks, spotlightPadding, styles, target } = this.props;
     const element = getElement(target);
     const elementRect = getClientRect(element);
@@ -99,7 +96,6 @@ export default class Overlay extends React.Component {
       ...(isLegacy() ? styles.spotlightLegacy : styles.spotlight),
       height: Math.round(elementRect.height + (spotlightPadding * 2)),
       left: Math.round(elementRect.left - spotlightPadding),
-      opacity: showSpotlight ? 1 : 0,
       pointerEvents: spotlightClicks ? 'none' : 'auto',
       position: isFixedTarget ? 'fixed' : 'absolute',
       top,
@@ -109,7 +105,6 @@ export default class Overlay extends React.Component {
   }
 
   render() {
-    const { showSpotlight } = this.state;
     const {
       disableOverlay,
       onClickOverlay,
@@ -134,7 +129,7 @@ export default class Overlay extends React.Component {
         style={stylesOverlay}
         onClick={onClickOverlay}
       >
-        {placement !== 'center' && showSpotlight && (
+        {placement !== 'center' && (
           <Spotlight styles={this.stylesSpotlight} />
         )}
       </div>

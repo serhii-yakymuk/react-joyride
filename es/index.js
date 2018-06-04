@@ -1249,9 +1249,7 @@ var Overlay = function (_React$Component) {
     };
 
     _this.state = {
-      mouseOverSpotlight: false,
-      isScrolling: false,
-      showSpotlight: props.disableScrolling
+      mouseOverSpotlight: false
     };
     return _this;
   }
@@ -1293,7 +1291,6 @@ var Overlay = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var showSpotlight = this.state.showSpotlight;
       var _props2 = this.props,
           disableOverlay = _props2.disableOverlay,
           onClickOverlay = _props2.onClickOverlay,
@@ -1318,13 +1315,12 @@ var Overlay = function (_React$Component) {
           style: stylesOverlay,
           onClick: onClickOverlay
         },
-        placement !== 'center' && showSpotlight && React.createElement(JoyrideSpotlight, { styles: this.stylesSpotlight })
+        placement !== 'center' && React.createElement(JoyrideSpotlight, { styles: this.stylesSpotlight })
       );
     }
   }, {
     key: 'stylesSpotlight',
     get: function get$$1() {
-      var showSpotlight = this.state.showSpotlight;
       var _props3 = this.props,
           spotlightClicks = _props3.spotlightClicks,
           spotlightPadding = _props3.spotlightPadding,
@@ -1339,7 +1335,6 @@ var Overlay = function (_React$Component) {
       return _extends({}, isLegacy() ? styles.spotlightLegacy : styles.spotlight, {
         height: Math.round(elementRect.height + spotlightPadding * 2),
         left: Math.round(elementRect.left - spotlightPadding),
-        opacity: showSpotlight ? 1 : 0,
         pointerEvents: spotlightClicks ? 'none' : 'auto',
         position: isFixedTarget ? 'fixed' : 'absolute',
         top: top,
