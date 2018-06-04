@@ -1248,19 +1248,6 @@ var Overlay = function (_React$Component) {
       }
     };
 
-    _this.handleScroll = function () {
-      if (!_this.state.isScrolling) {
-        _this.setState({ isScrolling: true, showSpotlight: false });
-      }
-      clearTimeout(_this.scrollTimeout);
-
-      _this.scrollTimeout = setTimeout(function () {
-        clearTimeout(_this.scrollTimeout);
-        _this.setState({ isScrolling: false, showSpotlight: true });
-        _this.scrollParent.removeEventListener('scroll', _this.handleScroll);
-      }, 50);
-    };
-
     _this.state = {
       mouseOverSpotlight: false,
       isScrolling: false,
@@ -1285,26 +1272,10 @@ var Overlay = function (_React$Component) {
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      var _this2 = this;
-
-      var disableScrolling = nextProps.disableScrolling,
-          lifecycle = nextProps.lifecycle,
+      var lifecycle = nextProps.lifecycle,
           spotlightClicks = nextProps.spotlightClicks,
           disableOverlay = nextProps.disableOverlay;
 
-
-      if (!disableScrolling) {
-        if (this.props.lifecycle !== lifecycle && lifecycle === LIFECYCLE.TOOLTIP) {
-          this.scrollParent.addEventListener('scroll', this.handleScroll, { passive: true });
-
-          setTimeout(function () {
-            if (!_this2.state.isScrolling) {
-              _this2.setState({ showSpotlight: true });
-              _this2.scrollParent.removeEventListener('scroll', _this2.handleScroll);
-            }
-          }, 100);
-        }
-      }
 
       if (this.props.spotlightClicks !== spotlightClicks || this.props.disableOverlay !== disableOverlay || this.props.lifecycle !== lifecycle) {
         if (spotlightClicks && lifecycle === LIFECYCLE.TOOLTIP) {
@@ -1317,15 +1288,7 @@ var Overlay = function (_React$Component) {
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      var disableScrolling = this.props.disableScrolling;
-
-
       document.removeEventListener('mousemove', this.handleMouseMove);
-
-      if (!disableScrolling) {
-        clearTimeout(this.scrollTimeout);
-        this.scrollParent.removeEventListener('scroll', this.handleScroll);
-      }
     }
   }, {
     key: 'render',

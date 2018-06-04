@@ -52,20 +52,7 @@ export default class Overlay extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { disableScrolling, lifecycle, spotlightClicks, disableOverlay } = nextProps;
-
-    if (!disableScrolling) {
-      if (this.props.lifecycle !== lifecycle && lifecycle === LIFECYCLE.TOOLTIP) {
-        this.scrollParent.addEventListener('scroll', this.handleScroll, { passive: true });
-
-        setTimeout(() => {
-          if (!this.state.isScrolling) {
-            this.setState({ showSpotlight: true });
-            this.scrollParent.removeEventListener('scroll', this.handleScroll);
-          }
-        }, 100);
-      }
-    }
+    const { lifecycle, spotlightClicks, disableOverlay } = nextProps;
 
     if (
       this.props.spotlightClicks !== spotlightClicks ||
@@ -82,14 +69,7 @@ export default class Overlay extends React.Component {
   }
 
   componentWillUnmount() {
-    const { disableScrolling } = this.props;
-
     document.removeEventListener('mousemove', this.handleMouseMove);
-
-    if (!disableScrolling) {
-      clearTimeout(this.scrollTimeout);
-      this.scrollParent.removeEventListener('scroll', this.handleScroll);
-    }
   }
 
   handleMouseMove = (e) => {
@@ -105,19 +85,6 @@ export default class Overlay extends React.Component {
     if (inSpotlight !== mouseOverSpotlight) {
       this.setState({ mouseOverSpotlight: inSpotlight });
     }
-  };
-
-  handleScroll = () => {
-    if (!this.state.isScrolling) {
-      this.setState({ isScrolling: true, showSpotlight: false });
-    }
-    clearTimeout(this.scrollTimeout);
-
-    this.scrollTimeout = setTimeout(() => {
-      clearTimeout(this.scrollTimeout);
-      this.setState({ isScrolling: false, showSpotlight: true });
-      this.scrollParent.removeEventListener('scroll', this.handleScroll);
-    }, 50);
   };
 
   get stylesSpotlight() {
